@@ -1,7 +1,9 @@
+% Multi-table databases
+
 Recommended reading
 ===================
 
-1.  Primary theoretical resource: [@connolly:2015:database Chapter 4, 5]
+1.  Textbook: Connolly & Begg (2015) Chapters 4, 5
 
 2.  PostgreSQL manual chapters as identified in this document.
 
@@ -35,6 +37,73 @@ Degree
 Cardinality:
 
 :   of a relation is the **number of tuples** that it contains.
+
+JOIN
+====
+
+JOIN operation permits queries spanning multiple tables.
+See Postgres manual sections:
+- [JOIN
+tutorial](https://www.postgresql.org/docs/current/tutorial-join.html) and 
+- [Table
+expressions](https://www.postgresql.org/docs/13/queries-table-expressions.html)
+
+Assume R1 to be a row of Table T1.
+Similarly R2 for T2.
+Normally should explicitly specify columns required and use table prefix to avoid ambiguity.
+
+INNER JOIN
+----------
+
+For each row R1 of T1, the joined table has a row for each row in T2
+that satisfies the join condition with R1.
+
+LEFT JOIN
+---------
+
+Same as INNER JOIN except that output also includes any row in T1 that
+does not match one or more rows in T2. Null values are substituted for
+T2 in the output row.
+
+RIGHT JOIN
+----------
+
+Similar to LEFT JOIN.
+Same as INNER JOIN, except any row in T2 that does not match >=1 rows in T1 will be output.
+Null values are subtituted for T1 columns in the output row.
+
+FULL JOIN
+---------
+
+Similar to combination of LEFT and RIGHT JOIN.
+INNER JOIN performed.
+Then rows in T1 without corresponding T2 output with nulls for T2.
+Same again, rows in T2 without corresponding T1 rows output with nulls for
+T1.
+
+Views {#sec:views}
+=====
+
+[Views](https://www.postgresql.org/docs/13/tutorial-views.html) are
+defined by @connolly:2015:database as:
+
+> The dynamic result of one or more relational operations operating on
+> the base relations to produce another relation. A view is a virtual
+> relation that does not necessarily exist in the database but can be
+> produced upon request by a particular user, at the time of the
+> request.
+
+``` {.postgresql}
+/* Creation syntax: */
+CREATE VIEW my_view AS
+SELECT ... ;
+/* select statement can be any valid select */
+
+/* VIEW can be selected like any other table */
+SELECT * FROM my_view ; 
+```
+
+
 
 Foreign keys
 ============
@@ -84,133 +153,20 @@ policy bigint references policies ON DELETE SET NULL,
 );
 ```
 
-JOIN
-====
 
-The JOIN operation permits queries across more than one table. See both
-the [JOIN
-tutorial](https://www.postgresql.org/docs/current/tutorial-join.html)
-and the [Table
-expressions](https://www.postgresql.org/docs/13/queries-table-expressions.html)
-section from Postgres manual for full details.
 
-Assume R1 to be a row of Table T1. Similarly R2 for T2. Normally should
-explicitly specify columns required and use table prefix to avoid
-ambiguity.
 
-INNER JOIN
-----------
-
-For each row R1 of T1, the joined table has a row for each row in T2
-that satisfies the join condition with R1.
-
-LEFT JOIN
----------
-
-Same as INNER JOIN except that output also includes any row in T1 that
-does not match one or more rows in T2. Null values are substituted for
-T2 in the output row.
-
-RIGHT JOIN
-----------
-
-Similar to LEFT JOIN. Same as INNER JOIN, except any row in T2 that does
-not match $\ge 1$ rows in T1 will be output. Null values are subtituted
-for T1 columns in the otuput row.
-
-FULL JOIN
----------
-
-Similar to combination of LEFT and RIGHT JOIN. INNER JOIN performed.
-Then rows in T1 without corresponding T2 output with nulls for T2. Same
-again, rows in T2 without corresponding T1 rows output with nulls for
-T1.
-
-CASE clause
-===========
-
-[CASE](https://www.postgresql.org/docs/13/functions-conditional.html#FUNCTIONS-CASE)
-permits conditionals in select statement outputs.
-
-``` {.postgresql}
-/* using case statement */ 
-SELECT account_id, balance, limit,
-CASE 
-WHEN balance>limit then 'OVERDRAWN' 
-WHEN balance=0 THEN 'ZERO' 
-ELSE 'OK' 
-END AS status
-FROM accounts /* rest of query */
-;
-```
-
-Views {#sec:views}
-=====
-
-[Views](https://www.postgresql.org/docs/13/tutorial-views.html) are
-defined by @connolly:2015:database as:
-
-> The dynamic result of one or more relational operations operating on
-> the base relations to produce another relation. A view is a virtual
-> relation that does not necessarily exist in the database but can be
-> produced upon request by a particular user, at the time of the
-> request.
-
-``` {.postgresql}
-/* Creation syntax: */
-CREATE VIEW my_view AS
-SELECT ... ;
-/* select statement can be any valid select */
-
-/* VIEW can be selected like any other table */
-SELECT * FROM my_view ; 
-```
-
-Domains {#sec:domains}
-=======
-
-[Domains](https://www.postgresql.org/docs/13/domains.html) are
-user-defined types based on underlying type. Defaults to NULL allowed,
-best to define any NOT NULL conditions on the underlying columns. CHECK
-constraints can be defined.
-
-``` {.postgresql}
-/* Number to hold 1-10 user rating */
-CREATE DOMAIN rating AS integer CHECK ( VALUE >= 1 AND VALUE <=10 );
-
-/* Just use the domain as type when creating table */
-CREATE TABLE restaurants (
-    id bigserial primary key,
-    /* creating two columns using our domain: */
-    visitor_rating rating not null,
-    reviewer_rating rating, 
-    /* other columns */
-);
-```
-
-Enumerated types {#sec:enumerated-types}
-================
-
-[Enumerated
-types](https://www.postgresql.org/docs/13/datatype-enum.html) allow
-columns to accept a small number of allowable values. Examples include
-day of week, identified gender, north / south / east / west.
-
-``` {.postgresql}
-/* creating an enumerated type */
-CREATE TYPE mood AS ENUM ( 'sad', 'ok', 'happy');
-
-/* creating column using enumerated type  */
-ALTER TABLE people ADD COLUMN reported_mood mood;
-```
 
 Exercise
 ========
 
 Create a simple task manager application using two tables (minimum) for
-projects and tasks (linked to projects). Every table should have
-appropriate data types, NULL/NOT NULL, PRIMARY KEY, UNIQUE KEYs. Tables
-should be linked using foreign keys with correct ON DELETE / ON UPDATE
-behaviours chosen. Create a view that encapsulates a query involving at
-least two tables and provides at least one computed column using the
-CASE clause. You should make use of enumerated types and domains.
+projects and tasks (linked to projects).
+
+Every table should have appropriate data types, NULL/NOT NULL, PRIMARY KEY, UNIQUE KEYs.
+
+Tables should be linked using foreign keys with correct ON DELETE / ON UPDATE
+behaviours chosen.
+
+Create a view that encapsulates a query involving at
+least two tables.

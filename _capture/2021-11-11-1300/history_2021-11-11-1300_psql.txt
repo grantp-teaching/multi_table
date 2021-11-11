@@ -1,0 +1,235 @@
+create table population ( LocID int,Location text,VarID int,Variant text,Time numeric,MidPeriod numeric,PopMale numeric,PopFemale numeric,PopTotal numeric,PopDensity numeric); 
+COPY population FROM 'WPP2019_TotalPopulationBySex.csv' with (format csv); 
+\COPY population FROM 'WPP2019_TotalPopulationBySex.csv' with (format csv); 
+\COPY population FROM 'WPP2019_TotalPopulationBySex.csv' with (format csv header)
+;
+\COPY population FROM 'WPP2019_TotalPopulationBySex.csv' with format csv header; 
+\COPY population FROM 'WPP2019_TotalPopulationBySex.csv' csv header; 
+\q
+GRANT CONNECT ON DATABASE population to student;
+;
+grant usage on public to student;
+\d
+grant usage on public.* to student;
+grant usage on schema public to student;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO student;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO username;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO student;
+\h
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO student;
+\h
+\?
+\d
+\d+
+\d population
+select count(*) from population; 
+select * from population limit 10 ; 
+select location, time, poptotal, popdensity from population limit 10 ; 
+select location, time, poptotal, popdensity from population where location like 'Ireland' limit 10 ; 
+select location, time, poptotal, popdensity from population where location like 'Ireland'  ; 
+select location, time, poptotal, popdensity from population where location like 'Ireland' and time > 1990 and time < 2021  ; 
+select location, time, variant, poptotal, popdensity from population where location like 'Ireland' and time > 1990 and time < 2021  ; 
+select location, time, variant, poptotal, popdensity from population where location like 'Ireland' and time > 1990 and time < 2021 and variant='Medium'  ; 
+select location, time, variant, poptotal, popdensity from population where location like 'Ireland' and time > 2000 and time < 2021 and variant='Medium'  ; 
+select location, poptotal, popdensity from population where time=2020 and variant='Medium' order by popdensity desc limit 20 ; 
+select location, poptotal, popdensity from population where time=2020 and variant='Medium' where location like 'F*' order by popdensity desc limit 20 ; 
+select location, poptotal, popdensity from population where time=2020 and variant='Medium' and location like 'F*' order by popdensity desc limit 20 ; 
+select location, poptotal, popdensity from population where time=2020 and variant='Medium' and location like 'F%' order by popdensity desc limit 20 ; 
+select location, poptotal, popdensity from population where time=2020 and variant='Medium' order by popdensity desc limit 20 ; 
+select location, poptotal, popdensity, poptotal/popdensity from population where time=2020 and variant='Medium' order by popdensity desc limit 20 ; 
+select location, poptotal, popdensity, round(poptotal/popdensity,3) from population where time=2020 and variant='Medium' order by popdensity desc limit 20 ; 
+select location, poptotal, popdensity, round(poptotal/popdensity,3) as area from population where time=2020 and variant='Medium' order by popdensity desc limit 20 ; 
+\q
+\d
+create table tasks;
+create table tasks ( id bigserial primary key, description text not null unique, due date , done boolean not null default false ); 
+\d tasks
+\d
+;
+table tasks ; 
+insert into tasks ( description, due ) values ( 'Mow the lawn', '2021-11-11') ; 
+table tasks ; 
+insert into tasks ( description ) values ( 'Book dentist appointment') ; 
+table tasks ; 
+insert into tasks ( description ) values ( 'Book dentist appointment') ; 
+\d tasks
+insert into tasks ( description ) values ( 'Book vet appointment') ; 
+insert into tasks ( description ) values ( 'Book hair appointment') ; 
+\d tasks
+table tasks; 
+select * from tasks where description like 'Book %';
+delete from tasks where description like 'Book %';
+delete from tasks where description like 'Book %';
+insert into tasks ( description ) values ( 'Book dentist appointment') ; 
+insert into tasks ( description ) values ( 'Book hair appointment') ; 
+insert into tasks ( description ) values ( 'Book vet appointment') ; 
+table tasks; 
+select 20-2; 
+select now(); 
+select now()+7; 
+select now()::date;
+select now()::date + 7 ;
+table tasks ; 
+update tasks set due=now()::date+7 where due is null ; 
+table tasks ; 
+\d date
+\d tasks
+alter table tasks alter column due set not null ; 
+\d tasks
+insert into tasks ( description ) values ( 'Book car service') ; 
+alter table tasks alter column due set default now()::date+7 ; 
+\d tasks
+insert into tasks ( description ) values ( 'Book car service') ; 
+table tasks; 
+alter table tasks add column client text ; 
+update tasks set client = "mum" where id>7 ; 
+update tasks set client = 'mum' where id>7 ; 
+table tasks; 
+update tasks set client = "me" where id=1 ; 
+update tasks set client = 'me' where id=1 ; 
+table tasks; 
+select * from tasks order by client asc ; 
+select * from tasks order by client desc ; 
+alter table tasks alter column client set not null ; 
+alter table tasks alter column client set not null default 'me'; 
+alter table tasks alter column client set default 'me'; 
+alter table tasks alter column client set not null ; 
+alter table tasks alter column client drop default; 
+alter table tasks alter column client drop not null; 
+alter table tasks alter column client drop not null; 
+alter table tasks alter column client drop not null; 
+alter table tasks alter column client drop not null; 
+table tasks ; 
+alter table tasks alter column client set not null ; 
+update tasks set client = 'me' where client is null ; 
+table tasks ; 
+alter table tasks alter column client set not null ; 
+alter user student createdb ; 
+\d
+\d tasks
+\?
+\s 'history_2021-11-04-1300.sql
+\s 'history_2021-11-04-1300.sql'
+select '34'+4
+;
+\d
+alter table tasks add column cost bigint not null default 0 ; 
+insert into tasks (description, cost) values ('xyz', '190'); 
+insert into tasks (description, cost, client) values ('xyz', '190', 'me'); 
+table tasks; 
+alter table tasks add column priceAmount int ; 
+table tasks; 
+begin;
+delete from tasks ; 
+insert into tasks (description) values ('x'); 
+insert into tasks (description) values ('x'); 
+rollback; 
+\l
+\l
+\d tasks
+alter table tasks drop column priceamount ; 
+\d tasks
+SELECT '2021-12-14 09:00'::DATETIME
+;
+SELECT '
+SELECT '2021-12-14 09:00'::timestamp
+;
+SELECT '2021-12-14 09:00'::time
+;
+\d
+create table departments ( id bigserial primary key , name text not null unique ) ; 
+create table products ( id bigserial primary key, name text not null unique , price bigint not null default 0 , department bigint not null default 1 ) ; 
+insert into departments ( name ) values ( 'ART' ), ('CLOTHES'), ('FOOD'); 
+table departments ; 
+insert into products ( department, price, name ) values ( 1, 10000, 'PICTURE LARGE');  
+insert into products ( department, price, name ) values ( 1, 5000, 'PICTURE LARGE');  
+insert into products ( department, price, name ) values ( 1, 5000, 'PICTURE SMALL');  
+insert into products ( department, price, name ) values ( 2, 1000, 'DUNDALK T SHIRT');  
+insert into products ( department, price, name ) values ( 2, 1400, 'DUNDALK SHIRT');  
+insert into products ( department, price, name ) values ( 3, 200, 'CHOCOLATE BAR');  
+table products ; 
+select * from products ; 
+select * from products join departments ; 
+select * from products join departments on department.id = products.department ; 
+select * from products join departments on departments.id = products.department ; 
+select product.id, product.name, product.price, department.name from products join departments on departments.id = products.department ; 
+select products.id, products.name, products.price, departments.name from products join departments on departments.id = products.department ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products join departments on departments.id = products.department ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products join departments on departments.id = products.department order by products.name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products join departments on departments.id = products.department order by products.price desc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products join departments on departments.id = products.department order by department asc, name asc ; 
+insert into products ( department, price, name ) values ( 0, 200, 'COCA COLA');  
+select products.id as product_id, products.name, products.price, departments.name as department from products join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products right join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products left join departments on departments.id = products.department order by department asc, name asc ; 
+insert into departments ( name ) values ('TICKETS'); 
+select products.id as product_id, products.name, products.price, departments.name as department from products left join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products right join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products inner join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products  join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products full  join departments on departments.id = products.department order by department asc, name asc ; 
+select * from products, departments where product.department = department.id ; 
+select * from products, departments where product.departments = departments.id ; 
+select * from products, departments where product.departments = departments.id ; 
+select * from products, departments where products.department = departments.id ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products full  join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products right  join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products left  join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products cross join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products cross join departments  order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price from products cross join products  name asc ; 
+select products.id as product_id, products.name, products.price from products cross join products ; 
+select products.id as product_id, products.name, products.price from products cross join products as p2 ; 
+select products.id as product_id, products.name, products.price from products, p2.id, p2.description, p2.price cross join products as p2 ; 
+select products.id as product_id, products.name, products.price, p2.id, p2.description, p2.price from products cross join products as p2 ; 
+select products.id as product_id, products.name, products.price, p2.id, p2.name, p2.price from products cross join products as p2 ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products left  join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products right  join departments on departments.id = products.department order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products right  join departments on products.department = departments.id order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products full join departments on products.department = departments.id order by department asc, name asc ; 
+select products.id as product_id, products.name, products.price, departments.name as department from products cross join departments order by department asc, name asc ; 
+table products ; 
+table departments ; 
+create table tax ( id char primary key, rate bigint not null default 0 ) ; 
+insert into tax ( id, rate) values ('Z',0), ('A', 20)); 
+insert into tax ( id, rate) values ('Z',0), ('A', 20); 
+alter table products add column tax char not null default 'Z'; 
+update products set tax='A' where department < 3 ; 
+select * from products ; 
+select product.id, product.name, department.name, tax.rate from products left join departments on departments.id=products.department join tax on products.tax=tax.id  ; 
+select products.id, products.name, departments.name, tax.rate from products left join departments on departments.id=products.department join tax on products.tax=tax.id  ; 
+select products.id, products.name, departments.name, products.price, tax.rate, round(products.price*tax.rate/100,0) as tax_amount from products left join departments on departments.id=products.department join tax on products.tax=tax.id  ; 
+table departments ; 
+update products set department=3 where id=7 ; 
+alter table products add constraint fk_department_departments_id foreign key department references departments(id) ; 
+alter table products add constraint fk_department_departments_id foreign key (department) references departments(id) ; 
+\dt products
+\d products
+update products set department = 50; 
+update products set department = 100*id; 
+table products;
+table departments; 
+begin; 
+update products set department=1 where department=3 ; 
+rollback;
+update products set department=10 where department=3 ;
+update departments set name='ARTWORK' where id=1; 
+delete from department where id=1; 
+delete from departments where id=1; 
+begin;
+\d products
+alter table products drop constraint fk_department_departments_id;
+savepoint sp1;
+alter table products add constraint fk_department_departments_id foreign key (department) references departments(id) on update cascade on delete cascade ; 
+savepoint sp1;
+table products; 
+delete from departments where id=3; 
+table products; 
+update departments set id=100*id; 
+table products; 
+rollback ; 
+create table discounts ( id bigserial primary key, department bigint not null references departments(id), percentage bigint default 0 ) ; 
+\d discounts
+\d
+\s
+\s history.txt
